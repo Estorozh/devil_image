@@ -21,9 +21,11 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-
+        this.onChangeInput = this.onChangeInput.bind(this)
+        this.withoutReferer = this.withoutReferer.bind(this)
 		this.state = {
-			user: null
+            user: null,
+            link: 'https://service.pavel.im/image'
 		};
 	}
 
@@ -35,14 +37,22 @@ class App extends React.Component {
 	}
 
 	getImage = async () => {
-        const image = document.getElementById('url').value;
+        const image = this.state.link;
 
         console.log({image});
 
         if (image) {
 			this.setState({ image });
 		}
-	};
+    };
+
+    onChangeInput(e) {
+        this.setState({link: e.target.value})
+    }
+
+    withoutReferer(link) {
+        return `http:${link.split(':')[1]}`
+    }
 
 	render() {
 		const { user, image } = this.state;
@@ -73,7 +83,7 @@ class App extends React.Component {
 						</Div>
 
                         <FormLayout>
-                            <Input type="text" id="url" />
+                            <Input type="text" id="url"  value={this.state.link} onChange={this.onChangeInput} />
 
                             <Button size="xl" onClick={ this.getImage }>Загрузить</Button>
                         </FormLayout>
@@ -81,7 +91,7 @@ class App extends React.Component {
 						{
 							!!image &&
 							<Div style={{ textAlign: 'center' }}>
-                                <img src={ image } alt="remote file" />
+                                <img src={ this.withoutReferer(image) } alt="remote file" />
 							</Div>
 						}
                     </Group>
